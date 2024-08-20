@@ -89,6 +89,7 @@ class BaseAuthItemController extends WebController
             $this->updateSettingAssignableRoles($model, $oldModel);
             Event::trigger(Yii::$app->getModules(), Module::EVENT_ITEM_UPDATE, new Event(['payload' => ['item' => $model, 'oldItem' => $oldModel]]));
             if($model->save()) {
+                Yii::$app->session->setFlash('success', Module::t('The role has been updated successfully.'));
                 return $this->redirect(['view', 'id' => $model->name]);
             }
         }
@@ -124,6 +125,7 @@ class BaseAuthItemController extends WebController
         Event::trigger(Yii::$app->getModules(), Module::EVENT_ITEM_DELETE, new Event(['payload' => ['item' => $model]]));
         $this->deleteSettingAssignableRoles($model);
         Yii::$app->authManager->remove($model->item);
+        Yii::$app->session->setFlash('success', Module::t('The role was deleted successfully.'));
 
         return $this->redirect(['index']);
     }
@@ -154,6 +156,7 @@ class BaseAuthItemController extends WebController
         $model = new AuthItem();
         $model->type = $this->type;
         if ($model->load($this->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', Module::t('The role was created successfully.'));
             return $this->redirect(['view', 'id' => $model->name]);
         } else {
             return $this->render('create', ['model' => $model]);
